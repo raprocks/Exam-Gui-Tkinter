@@ -1,7 +1,7 @@
 import tkinter as tk
 import time
 
-current_balance = 1000
+logged_in = {}
 
 
 class SampleApp(tk.Tk):
@@ -9,7 +9,7 @@ class SampleApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
-        self.shared_data = {'Balance': tk.IntVar()}
+        self.shared_data = {}
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
@@ -17,7 +17,7 @@ class SampleApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, MenuPage, WithdrawPage, DepositPage, BalancePage):
+        for F in (StartPage, MenuPage, TestsPage, TestsPage):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -64,9 +64,9 @@ class StartPage(tk.Frame):
         my_username = tk.StringVar()
 
         username_entry = tk.Entry(self,
-                                      textvariable=my_username,
-                                      font=('orbitron', 12),
-                                      width=22)
+                                  textvariable=my_username,
+                                  font=('orbitron', 12),
+                                  width=22)
         username_entry.focus_set()
         username_entry.pack(ipady=7)
 
@@ -114,8 +114,8 @@ class StartPage(tk.Frame):
                                             anchor='n')
         incorrect_password_label.pack(fill='both', expand=True)
 
-        bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
-        bottom_frame.pack(fill='x', side='bottom')
+        # bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
+        # bottom_frame.pack(fill='x', side='bottom')
 
 
 class MenuPage(tk.Frame):
@@ -125,7 +125,7 @@ class MenuPage(tk.Frame):
         self.controller = controller
 
         heading_label = tk.Label(self,
-                                 text='SECURITEX ATM',
+                                 text='Mock Test Portal',
                                  font=('orbitron', 45, 'bold'),
                                  foreground='#ffffff',
                                  background='#3d3d5c')
@@ -149,72 +149,61 @@ class MenuPage(tk.Frame):
         button_frame = tk.Frame(self, bg='#33334d')
         button_frame.pack(fill='both', expand=True)
 
-        def withdraw():
-            controller.show_frame('WithdrawPage')
+        def give_test():
+            controller.show_frame('TestsPage')
 
-        withdraw_button = tk.Button(button_frame,
-                                    text='Withdraw',
-                                    command=withdraw,
+        tests_btn = tk.Button(button_frame,
+                                    text='Give Test',
+                                    command=give_test,
                                     relief='raised',
                                     borderwidth=3,
                                     width=50,
                                     height=5)
-        withdraw_button.grid(row=0, column=0, pady=5)
+        tests_btn.grid(row=0, column=0, pady=5)
 
-        def deposit():
-            controller.show_frame('DepositPage')
+        def admin_panel():
+            controller.show_frame('AdminPage')
 
-        deposit_button = tk.Button(button_frame,
-                                   text='Deposit',
-                                   command=deposit,
+        admin_btn = tk.Button(button_frame,
+                                   text='Admin Panel',
+                                   command=admin_panel,
                                    relief='raised',
                                    borderwidth=3,
                                    width=50,
                                    height=5)
-        deposit_button.grid(row=1, column=0, pady=5)
-
-        def balance():
-            controller.show_frame('BalancePage')
-
-        balance_button = tk.Button(button_frame,
-                                   text='Balance',
-                                   command=balance,
-                                   relief='raised',
-                                   borderwidth=3,
-                                   width=50,
-                                   height=5)
-        balance_button.grid(row=2, column=0, pady=5)
+        admin_btn.grid(row=1, column=0, pady=5)
 
         def exit():
             controller.show_frame('StartPage')
 
-        exit_button = tk.Button(button_frame,
-                                text='Exit',
+        log_out_btn = tk.Button(button_frame,
+                                text='Log Out',
                                 command=exit,
                                 relief='raised',
                                 borderwidth=3,
                                 width=50,
                                 height=5)
-        exit_button.grid(row=3, column=0, pady=5)
+        log_out_btn.grid(row=3, column=0, pady=5)
 
         bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
         bottom_frame.pack(fill='x', side='bottom')
 
-class WithdrawPage(tk.Frame):
+
+class TestsPage(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg='#3d3d5c')
         self.controller = controller
 
         heading_label = tk.Label(self,
-                                 text='SECURITEX ATM',
+                                 text='Mock Test Portal',
                                  font=('orbitron', 45, 'bold'),
                                  foreground='#ffffff',
                                  background='#3d3d5c')
         heading_label.pack(pady=25)
 
         choose_amount_label = tk.Label(self,
-                                       text='Choose the amount you want to withdraw',
+                                       text='Choose the Subject',
                                        font=('orbitron', 13),
                                        fg='white',
                                        bg='#3d3d5c')
@@ -223,207 +212,62 @@ class WithdrawPage(tk.Frame):
         button_frame = tk.Frame(self, bg='#33334d')
         button_frame.pack(fill='both', expand=True)
 
-        def withdraw(amount):
-            global current_balance
-            current_balance -= amount
-            controller.shared_data['Balance'].set(current_balance)
-            controller.show_frame('MenuPage')
-
-        twenty_button = tk.Button(button_frame,
-                                  text='20',
-                                  command=lambda: withdraw(20),
+        maths_button = tk.Button(button_frame,
+                                  text='Mathematics',
+                                  # command=lambda: pass,
                                   relief='raised',
                                   borderwidth=3,
                                   width=50,
                                   height=5)
-        twenty_button.grid(row=0, column=0, pady=5)
+        maths_button.grid(row=0, column=0, pady=5)
 
-        forty_button = tk.Button(button_frame,
-                                 text='40',
-                                 command=lambda: withdraw(40),
+        english_btn = tk.Button(button_frame,
+                                 text='English',
+                                 # command=lambda: pass,
                                  relief='raised',
                                  borderwidth=3,
                                  width=50,
                                  height=5)
-        forty_button.grid(row=1, column=0, pady=5)
+        english_btn.grid(row=1, column=0, pady=5)
 
-        sixty_button = tk.Button(button_frame,
-                                 text='60',
-                                 command=lambda: withdraw(60),
+        geography_button = tk.Button(button_frame,
+                                 text='Geography',
+                                 # command=lambda: pass,
                                  relief='raised',
                                  borderwidth=3,
                                  width=50,
                                  height=5)
-        sixty_button.grid(row=2, column=0, pady=5)
+        geography_button.grid(row=2, column=0, pady=5)
 
-        eighty_button = tk.Button(button_frame,
-                                  text='80',
-                                  command=lambda: withdraw(80),
+        cs_button = tk.Button(button_frame,
+                                  text='Computer Sciences',
+                                  # command=lambda: pass,
                                   relief='raised',
                                   borderwidth=3,
                                   width=50,
                                   height=5)
-        eighty_button.grid(row=3, column=0, pady=5)
+        cs_button.grid(row=3, column=0, pady=5)
 
-        one_hundred_button = tk.Button(button_frame,
-                                       text='100',
-                                       command=lambda: withdraw(100),
+        physics_button = tk.Button(button_frame,
+                                       text='Physics',
+                                       # command=lambda: pass,
                                        relief='raised',
                                        borderwidth=3,
                                        width=50,
                                        height=5)
-        one_hundred_button.grid(row=0, column=1, pady=5, padx=555)
+        physics_button.grid(row=0, column=1, pady=5, padx=555)
 
-        two_hundred_button = tk.Button(button_frame,
-                                       text='200',
-                                       command=lambda: withdraw(200),
+        chemistry_button = tk.Button(button_frame,
+                                       text='Chemistry',
+                                       # command=lambda: pass,
                                        relief='raised',
                                        borderwidth=3,
                                        width=50,
                                        height=5)
-        two_hundred_button.grid(row=1, column=1, pady=5)
-
-        three_hundred_button = tk.Button(button_frame,
-                                         text='300',
-                                         command=lambda: withdraw(300),
-                                         relief='raised',
-                                         borderwidth=3,
-                                         width=50,
-                                         height=5)
-        three_hundred_button.grid(row=2, column=1, pady=5)
-
-        cash = tk.StringVar()
-        other_amount_entry = tk.Entry(button_frame,
-                                      textvariable=cash,
-                                      width=59,
-                                      justify='right')
-        other_amount_entry.grid(row=3, column=1, pady=5, ipady=30)
-
-        def other_amount(_):
-            global current_balance
-            current_balance -= int(cash.get())
-            controller.shared_data['Balance'].set(current_balance)
-            cash.set('')
-            controller.show_frame('MenuPage')
-
-        other_amount_entry.bind('<Return>', other_amount)
+        chemistry_button.grid(row=1, column=1, pady=5)
 
         bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
         bottom_frame.pack(fill='x', side='bottom')
-
-        
-
-
-class DepositPage(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg='#3d3d5c')
-        self.controller = controller
-
-        heading_label = tk.Label(self,
-                                 text='SECURITEX ATM',
-                                 font=('orbitron', 45, 'bold'),
-                                 foreground='#ffffff',
-                                 background='#3d3d5c')
-        heading_label.pack(pady=25)
-
-        space_label = tk.Label(self, height=4, bg='#3d3d5c')
-        space_label.pack()
-
-        enter_amount_label = tk.Label(self,
-                                      text='Enter amount',
-                                      font=('orbitron', 13),
-                                      bg='#3d3d5c',
-                                      fg='white')
-        enter_amount_label.pack(pady=10)
-
-        cash = tk.StringVar()
-        deposit_entry = tk.Entry(self,
-                                 textvariable=cash,
-                                 font=('orbitron', 12),
-                                 width=22)
-        deposit_entry.pack(ipady=7)
-
-        def deposit_cash():
-            global current_balance
-            current_balance += int(cash.get())
-            controller.shared_data['Balance'].set(current_balance)
-            controller.show_frame('MenuPage')
-            cash.set('')
-
-        enter_button = tk.Button(self,
-                                 text='Enter',
-                                 command=deposit_cash,
-                                 relief='raised',
-                                 borderwidth=3,
-                                 width=40,
-                                 height=3)
-        enter_button.pack(pady=10)
-
-        two_tone_label = tk.Label(self, bg='#33334d')
-        two_tone_label.pack(fill='both', expand=True)
-
-        bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
-        bottom_frame.pack(fill='x', side='bottom')
-
-        
-
-
-class BalancePage(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg='#3d3d5c')
-        self.controller = controller
-
-        heading_label = tk.Label(self,
-                                 text='SECURITEX ATM',
-                                 font=('orbitron', 45, 'bold'),
-                                 foreground='#ffffff',
-                                 background='#3d3d5c')
-        heading_label.pack(pady=25)
-
-        global current_balance
-        controller.shared_data['Balance'].set(current_balance)
-        balance_label = tk.Label(self,
-                                 textvariable=controller.shared_data['Balance'],
-                                 font=('orbitron', 13),
-                                 fg='white',
-                                 bg='#3d3d5c',
-                                 anchor='w')
-        balance_label.pack(fill='x')
-
-        button_frame = tk.Frame(self, bg='#33334d')
-        button_frame.pack(fill='both', expand=True)
-
-        def menu():
-            controller.show_frame('MenuPage')
-
-        menu_button = tk.Button(button_frame,
-                                command=menu,
-                                text='Menu',
-                                relief='raised',
-                                borderwidth=3,
-                                width=50,
-                                height=5)
-        menu_button.grid(row=0, column=0, pady=5)
-
-        def exit():
-            controller.show_frame('StartPage')
-
-        exit_button = tk.Button(button_frame,
-                                text='Exit',
-                                command=exit,
-                                relief='raised',
-                                borderwidth=3,
-                                width=50,
-                                height=5)
-        exit_button.grid(row=1, column=0, pady=5)
-
-        bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
-        bottom_frame.pack(fill='x', side='bottom')
-
-        
-
 
 if __name__ == "__main__":
     app = SampleApp()
