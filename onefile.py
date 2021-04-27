@@ -228,59 +228,59 @@ class TestsPage(tk.Frame):
         button_frame = tk.Frame(self, bg='#3d3d5c')
         button_frame.pack(fill='both', expand=True)
 
-        maths_button = tk.Button(button_frame,
-                                 text='Mathematics',
+        EM_button = tk.Button(button_frame,
+                                 text='Engineering Mathematics-4',
                                  # command=lambda: pass,
                                  relief='raised',
                                  borderwidth=3,
                                  width=50,
                                  height=5)
-        maths_button.grid(row=0, column=0, pady=5)
+        EM_button.grid(row=0, column=0, pady=5)
 
-        english_btn = tk.Button(button_frame,
-                                text='English',
+        OS_btn = tk.Button(button_frame,
+                                text='Operating System',
                                 # command=lambda: pass,
                                 relief='raised',
                                 borderwidth=3,
                                 width=50,
                                 height=5)
-        english_btn.grid(row=1, column=0, pady=5)
+        OS_btn.grid(row=1, column=0, pady=5)
 
-        geography_button = tk.Button(button_frame,
-                                     text='Geography',
+        AT_button = tk.Button(button_frame,
+                                     text='Automata Theory',
                                      # command=lambda: pass,
                                      relief='raised',
                                      borderwidth=3,
                                      width=50,
                                      height=5)
-        geography_button.grid(row=2, column=0, pady=5)
+        AT_button.grid(row=2, column=0, pady=5)
 
-        cs_button = tk.Button(button_frame,
-                              text='Computer Sciences',
+        cn_button = tk.Button(button_frame,
+                              text='CNND',
                               # command=lambda: pass,
                               relief='raised',
                               borderwidth=3,
                               width=50,
                               height=5)
-        cs_button.grid(row=3, column=0, pady=5)
+        cn_button.grid(row=3, column=0, pady=5)
 
-        physics_button = tk.Button(button_frame,
-                                   text='Physics',
+        py_button = tk.Button(button_frame,
+                                   text='Python Lab',
                                    # command=lambda: pass,
                                    relief='raised',
                                    borderwidth=3,
                                    width=50,
                                    height=5)
-        physics_button.grid(row=0, column=1, pady=5, padx=555)
+        py_button.grid(row=0, column=1, pady=5, padx=555)
 
-        chemistry_button = tk.Button(button_frame,
-                                     text='Chemistry',
+        coa_button = tk.Button(button_frame,
+                                     text='COA',
                                      # command=lambda: pass,
                                      relief='raised',
                                      borderwidth=3,
                                      width=50,
                                      height=5)
-        chemistry_button.grid(row=1, column=1, pady=5)
+        coa_button.grid(row=1, column=1, pady=5)
 
         back_button = tk.Button(button_frame,
                                 text='Go Back',
