@@ -159,8 +159,10 @@ class AdminLogin(tk.Frame):
         if check_user(DB, self.username_var.get(), self.password_var.get()):
             if get_user(DB, username=self.username_var.get())[-1] == 1:
                 self.controller.show_frame("AdminMenuPage")
+            else:
+                self.incorrect_password_label['text'] = 'You are a Candidate!'
         else:
-            self.incorrect_password_label['text'] = 'Incorrect Username or Password or you are a Candidate!'
+            self.incorrect_password_label['text'] = 'Incorrect Username or Password'
 
 
 class CandidateMenuPage(tk.Frame):
