@@ -141,8 +141,8 @@ class AdminLogin(tk.Frame):
             'orbitron', 13), fg='white', bg='#3d3d5c', anchor='n')
         self.incorrect_password_label.pack(fill='x', pady=2)
 
-        admin_login_button = tk.Button(self, text='Admin Login', command=lambda: self.controller.show_frame(
-            "AdminMenuPage"), relief='raised', borderwidth=3, width=40, height=3)
+        admin_login_button = tk.Button(
+            self, text='Admin Login', command=self.verify, relief='raised', borderwidth=3, width=40, height=3)
         admin_login_button.pack(pady=10)
         candidate_login_button = tk.Button(
             self, text='Candidate Login', command=self.verify, relief='raised', borderwidth=3, width=40, height=3)
