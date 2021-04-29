@@ -1,6 +1,6 @@
 import tkinter as tk
 import time
-from tkinter.constants import LEFT, N, RIGHT
+from tkinter.constants import LEFT, N, RIGHT, X
 import sqlite3
 
 from password_utils import *
@@ -22,7 +22,7 @@ class SampleApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (CandidateLogin, CandidateMenuPage, AdminLogin, TestsPage, TestsPage, AdminMenuPage, AddCoursePage):
+        for F in (CandidateLogin, CandidateMenuPage, AdminLogin, TestsPage, TestsPage, AdminMenuPage, AddCoursePage, AddUserPage):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -95,9 +95,6 @@ class CandidateLogin(tk.Frame):
         else:
             self.incorrect_password_label['text'] = 'Incorrect Password'
 
-        # bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
-        # bottom_frame.pack(fill='x', side='bottom')
-
     def handle_focus_in(self, _):
         self.password_entry_box.configure(fg='black', show='*')
 
@@ -110,7 +107,7 @@ class AdminLogin(tk.Frame):
 
         self.controller.title('Mock Test Gui')
         self.controller.state('zoomed')
-        #self.controller.iconphoto(False,tk.PhotoImage(file='C:/Users/urban boutique/Documents/atm tutorial/atm.png'))
+        # self.controller.iconphoto(False,tk.PhotoImage(file='C:/Users/urban boutique/Documents/atm tutorial/atm.png'))
 
         heading_label = tk.Label(self, text='Admin Login', font=(
             'orbitron', 45, 'bold'), foreground='#ffffff', background='#3d3d5c')
@@ -122,10 +119,10 @@ class AdminLogin(tk.Frame):
         username_label = tk.Label(self, text='Enter your Username', font=(
             'orbitron', 13), bg='#3d3d5c', fg='white')
         username_label.pack(pady=10)
-        my_username = tk.StringVar()
+        self.username_var = tk.StringVar()
 
         username_entry = tk.Entry(
-            self, textvariable=my_username, font=('orbitron', 12), width=22)
+            self, textvariable=self.username_var, font=('orbitron', 12), width=22)
         username_entry.focus_set()
         username_entry.pack(ipady=7)
 
@@ -133,9 +130,9 @@ class AdminLogin(tk.Frame):
             'orbitron', 13), bg='#3d3d5c', fg='white')
         password_label.pack(pady=10)
 
-        self.my_password = tk.StringVar()
+        self.password_var = tk.StringVar()
         self.password_entry_box = tk.Entry(
-            self, textvariable=self.my_password, font=('orbitron', 12), width=22)
+            self, textvariable=self.password_var, font=('orbitron', 12), width=22)
         self.password_entry_box.pack(ipady=7)
 
         self.password_entry_box.bind('<FocusIn>', self.handle_focus_in)
@@ -145,7 +142,7 @@ class AdminLogin(tk.Frame):
         self.incorrect_password_label.pack(fill='x', pady=2)
 
         admin_login_button = tk.Button(self, text='Admin Login', command=lambda: self.controller.show_frame(
-            "AdminPage"), relief='raised', borderwidth=3, width=40, height=3)
+            "AdminMenuPage"), relief='raised', borderwidth=3, width=40, height=3)
         admin_login_button.pack(pady=10)
         candidate_login_button = tk.Button(self, text='Candidate Login', command=lambda: self.controller.show_frame(
             "CandidateLogin"), relief='raised', borderwidth=3, width=40, height=3)
@@ -157,17 +154,16 @@ class AdminLogin(tk.Frame):
     def handle_focus_in(self, _):
         self.password_entry_box.configure(fg='black', show='*')
 
-    def check_password(self):
-        self.controller.show_frame('MenuPage')
-        if self.my_password.get() == '123':
-            self.my_password.set('')
-            self.incorrect_password_label['text'] = ''
+    def verify(self):
+        print("verifying")
+        if check_user(DB, self.username_var.get(), self.password_var.get()):
+            if get_user(DB, username=self.username_var.get())[-1] == 1:
+                self.controller.show_frame("AdminMenuPage")
         else:
-            self.incorrect_password_label['text'] = 'Incorrect Password'
+            self.incorrect_password_label['text'] = 'Incorrect Username or Password or you are a Candidate!'
 
 
 class CandidateMenuPage(tk.Frame):
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg='#3d3d5c')
         self.controller = controller
@@ -217,7 +213,7 @@ class AdminMenuPage(tk.Frame):
         tests_btn.grid(row=6, column=0, pady=5)
 
         tests_btn = tk.Button(button_frame, text='Manage Users', command=lambda: self.controller.show_frame(
-            "UserManagePage"), relief='raised', borderwidth=3, width=50, height=5)
+            "AddUserPage"), relief='raised', borderwidth=3, width=50, height=5)
         tests_btn.grid(row=9, column=0, pady=5)
 
         log_out_btn = tk.Button(button_frame, text='Log Out', command=lambda: self.controller.show_frame(
@@ -269,7 +265,7 @@ class TestsPage(tk.Frame):
         chemistry_button.grid(row=1, column=1, pady=5)
 
         back_button = tk.Button(button_frame, text='Go Back', command=lambda: self.controller.show_frame(
-            "CandidateLogin"), relief='raised', borderwidth=3, width=50, height=5)
+            "CandidateMenuPage"), relief='raised', borderwidth=3, width=50, height=5)
         back_button.grid(row=2, column=1, pady=5)
 
         bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
@@ -304,9 +300,55 @@ class AddCoursePage(tk.Frame):
                               relief='raised', borderwidth=3, width=40, height=3)
         ac_button.pack(pady=10)
 
-        goback_button = tk.Button(self, text='Go Back',
+        goback_button = tk.Button(self, text='Go Back', command=lambda: self.controller.show_frame("AdminMenuPage"),
                                   relief='raised', borderwidth=3, width=40, height=3)
         goback_button.pack(pady=10, side=RIGHT)
+
+
+class AddUserPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg='#3d3d5c')
+        self.controller = controller
+        newusername_label = tk.Label(self, text='Enter a Username', font=(
+            'orbitron', 13), bg='#3d3d5c', fg='white')
+        newusername_label.pack(pady=10)
+        self.username = tk.StringVar()
+
+        newusername_entry = tk.Entry(
+            self, textvariable=self.username, font=('orbitron', 12), width=22)
+        newusername_entry.focus_set()
+        newusername_entry.pack(ipady=7)
+
+        password_label = tk.Label(self, text="Choose Password", font=(
+            'orbitron', 13), bg='#3d3d5c', fg='white')
+        password_label.pack(pady=10)
+        self.password = tk.StringVar()
+
+        self.password_entry = tk.Entry(
+            self, textvariable=self.password, font=('orbitron', 12), width=22)
+        self.password_entry.focus_set()
+        self.password_entry.bind('<FocusIn>', self.handle_focus_in)
+        self.password_entry.pack(ipady=7)
+        self.admin = tk.BooleanVar()
+        admin_check = tk.Checkbutton(
+            self, text="Admin", variable=self.admin, bg="#3d3d5c")
+        admin_check.pack(ipadx=8)
+
+        add_user_btn = tk.Button(self, text='Add User', command=self.add,
+                                 relief='raised', borderwidth=3, width=40, height=3)
+        add_user_btn.pack(pady=10)
+
+        back_btn = tk.Button(self, text='Go Back',
+                             relief='raised', borderwidth=3, width=40, height=3)
+        back_btn.pack(pady=10, side=RIGHT)
+
+    def handle_focus_in(self, _):
+        self.password_entry.configure(fg='black', show='*')
+
+    def add(self):
+        print("adding user")
+        add_user(DB, self.username.get(),
+                 self.password.get(), self.admin.get())
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import sqlite3
+from typing import List
 import bcrypt
 
 # create tables
@@ -54,6 +55,12 @@ def check_user(con: sqlite3.Connection, username: str, password: str) -> bool:
         if res:
             return True
     return False
+
+
+def get_user(con: sqlite3.Connection, username: str) -> List:
+    user = con.execute("SELECT * FROM users WHERE username=?", (
+        username,)).fetchone()
+    return user
 
 
 def check_pass(password: str, pass_hash: bytes) -> bool:
