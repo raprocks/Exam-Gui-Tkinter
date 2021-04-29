@@ -340,7 +340,7 @@ class AddUserPage(tk.Frame):
                                  relief='raised', borderwidth=3, width=40, height=3)
         add_user_btn.pack(pady=10)
 
-        back_btn = tk.Button(self, text='Go Back',
+        back_btn = tk.Button(self, text='Go Back', command=lambda : self.controller.show_frame("AdminMenuPage"),
                              relief='raised', borderwidth=3, width=40, height=3)
         back_btn.pack(pady=10, side=RIGHT)
 
