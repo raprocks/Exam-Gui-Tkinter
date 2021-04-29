@@ -18,7 +18,7 @@ class SampleApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (CandidateLogin, CandidateMenuPage, AdminLogin, TestsPage, TestsPage, AdminPage):
+        for F in (CandidateLogin, CandidateMenuPage, AdminLogin, TestsPage, TestsPage, AdminMenuPage):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -193,13 +193,34 @@ class CandidateMenuPage(tk.Frame):
         log_out_btn.grid(row=3, column=0, pady=5)
 
 
-class AdminPage(tk.Frame):
-    '''
-    
-    '''
+class AdminMenuPage(tk.Frame):
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg='#3d3d5c')
         self.controller = controller
+
+        button_frame = tk.Frame(self, bg='#3d3d5c')
+        button_frame.pack(expand=True, anchor=N, pady=20)
+
+        tests_btn = tk.Button(button_frame, text='Add Courses', command=lambda: self.controller.show_frame(
+            "CourseAddPage"), relief='raised', borderwidth=3, width=50, height=5)
+        tests_btn.grid(row=0, column=0, pady=5)
+
+        tests_btn = tk.Button(button_frame, text='Add Questions', command=lambda: self.controller.show_frame(
+            "QuestionAddPage"), relief='raised', borderwidth=3, width=50, height=5)
+        tests_btn.grid(row=3, column=0, pady=5)
+
+        tests_btn = tk.Button(button_frame, text='Results', command=lambda: self.controller.show_frame(
+            "ResultsPage"), relief='raised', borderwidth=3, width=50, height=5)
+        tests_btn.grid(row=6, column=0, pady=5)
+
+        tests_btn = tk.Button(button_frame, text='Manage Users', command=lambda: self.controller.show_frame(
+            "UserManagePage"), relief='raised', borderwidth=3, width=50, height=5)
+        tests_btn.grid(row=9, column=0, pady=5)
+
+        log_out_btn = tk.Button(button_frame, text='Log Out', command=lambda: self.controller.show_frame(
+            "AdminLogin"), relief='raised', borderwidth=3, width=50, height=5)
+        log_out_btn.grid(row=12, column=0, pady=5)
 
 
 class TestsPage(tk.Frame):
@@ -285,7 +306,7 @@ class TestsPage(tk.Frame):
         back_button = tk.Button(button_frame,
                                 text='Go Back',
                                 command=lambda: self.controller.show_frame(
-                                    "MenuPage"),
+                                    "CandidateLogin"),
                                 relief='raised',
                                 borderwidth=3,
                                 width=50,
