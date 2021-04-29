@@ -1,8 +1,12 @@
 import tkinter as tk
 import time
 from tkinter.constants import LEFT, N, RIGHT
+import sqlite3
 
+from password_utils import *
 logged_in = {}
+
+DB = sqlite3.connect("./data.db")
 
 
 class SampleApp(tk.Tk):
@@ -18,7 +22,7 @@ class SampleApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (CandidateLogin, CandidateMenuPage, AdminLogin, TestsPage, TestsPage, AdminMenuPage):
+        for F in (CandidateLogin, CandidateMenuPage, AdminLogin, TestsPage, TestsPage, AdminMenuPage, AddCoursePage):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -55,10 +59,10 @@ class CandidateLogin(tk.Frame):
         username_label = tk.Label(self, text='Enter your Username', font=(
             'orbitron', 13), bg='#3d3d5c', fg='white')
         username_label.pack(pady=10)
-        my_username = tk.StringVar()
+        self.user_var = tk.StringVar()
 
         username_entry = tk.Entry(
-            self, textvariable=my_username, font=('orbitron', 12), width=22)
+            self, textvariable=self.user_var, font=('orbitron', 12), width=22)
         username_entry.focus_set()
         username_entry.pack(ipady=7)
 
@@ -66,9 +70,9 @@ class CandidateLogin(tk.Frame):
             'orbitron', 13), bg='#3d3d5c', fg='white')
         password_label.pack(pady=10)
 
-        self.my_password = tk.StringVar()
+        self.password_var = tk.StringVar()
         self.password_entry_box = tk.Entry(
-            self, textvariable=self.my_password, font=('orbitron', 12), width=22)
+            self, textvariable=self.password_var, font=('orbitron', 12), width=22)
         self.password_entry_box.pack(ipady=7)
 
         self.password_entry_box.bind('<FocusIn>', self.handle_focus_in)
@@ -76,7 +80,7 @@ class CandidateLogin(tk.Frame):
             'orbitron', ), fg='white', bg='#3d3d5c', anchor='n')
         self.incorrect_password_label.pack(fill='x', pady=2)
 
-        enter_button = tk.Button(self, text='Candidate Login', command=self.check_password,
+        enter_button = tk.Button(self, text='Candidate Login', command=self.verify,
                                  relief='raised', borderwidth=3, width=40, height=3)
         enter_button.pack(pady=10)
 
@@ -84,19 +88,18 @@ class CandidateLogin(tk.Frame):
             "AdminLogin"), relief='raised', borderwidth=3, width=40, height=3)
         admin_login_button.pack(pady=10, side=RIGHT)
 
+    def verify(self):
+        print("verifying")
+        if check_user(DB, self.user_var.get(), self.password_var.get()):
+            self.controller.show_frame("CandidateMenuPage")
+        else:
+            self.incorrect_password_label['text'] = 'Incorrect Password'
+
         # bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
         # bottom_frame.pack(fill='x', side='bottom')
 
     def handle_focus_in(self, _):
         self.password_entry_box.configure(fg='black', show='*')
-
-    def check_password(self):
-        self.controller.show_frame('CandidateMenuPage')
-        if self.my_password.get() == '123':
-            self.my_password.set('')
-            self.incorrect_password_label['text'] = ''
-        else:
-            self.incorrect_password_label['text'] = 'Incorrect Password'
 
 
 class AdminLogin(tk.Frame):
@@ -194,7 +197,6 @@ class CandidateMenuPage(tk.Frame):
 
 
 class AdminMenuPage(tk.Frame):
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg='#3d3d5c')
         self.controller = controller
@@ -203,7 +205,7 @@ class AdminMenuPage(tk.Frame):
         button_frame.pack(expand=True, anchor=N, pady=20)
 
         tests_btn = tk.Button(button_frame, text='Add Courses', command=lambda: self.controller.show_frame(
-            "CourseAddPage"), relief='raised', borderwidth=3, width=50, height=5)
+            "AddCoursePage"), relief='raised', borderwidth=3, width=50, height=5)
         tests_btn.grid(row=0, column=0, pady=5)
 
         tests_btn = tk.Button(button_frame, text='Add Questions', command=lambda: self.controller.show_frame(
@@ -224,7 +226,6 @@ class AdminMenuPage(tk.Frame):
 
 
 class TestsPage(tk.Frame):
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg='#3d3d5c')
         self.controller = controller
@@ -232,89 +233,80 @@ class TestsPage(tk.Frame):
         # names here
         # subjects = []
 
-        heading_label = tk.Label(self,
-                                 text='Mock Test Portal',
-                                 font=('orbitron', 45, 'bold'),
-                                 foreground='#ffffff',
-                                 background='#3d3d5c')
+        heading_label = tk.Label(self, text='Mock Test Portal', font=(
+            'orbitron', 45, 'bold'), foreground='#ffffff', background='#3d3d5c')
         heading_label.pack(pady=25)
 
-        choose_amount_label = tk.Label(self,
-                                       text='Choose the Subject',
-                                       font=('orbitron', 13),
-                                       fg='white',
-                                       bg='#3d3d5c')
+        choose_amount_label = tk.Label(self, text='Choose the Subject', font=(
+            'orbitron', 13), fg='white', bg='#3d3d5c')
         choose_amount_label.pack()
 
         button_frame = tk.Frame(self, bg='#3d3d5c')
         button_frame.pack(fill='both', expand=True)
 
-        maths_button = tk.Button(button_frame,
-                                 text='Mathematics',
-                                 # command=lambda: pass,
-                                 relief='raised',
-                                 borderwidth=3,
-                                 width=50,
-                                 height=5)
+        maths_button = tk.Button(button_frame, text='Mathematics',
+                                 relief='raised', borderwidth=3, width=50, height=5)
         maths_button.grid(row=0, column=0, pady=5)
 
-        english_btn = tk.Button(button_frame,
-                                text='English',
-                                # command=lambda: pass,
-                                relief='raised',
-                                borderwidth=3,
-                                width=50,
-                                height=5)
+        english_btn = tk.Button(button_frame, text='English',
+                                relief='raised', borderwidth=3, width=50, height=5)
         english_btn.grid(row=1, column=0, pady=5)
 
-        geography_button = tk.Button(button_frame,
-                                     text='Geography',
-                                     # command=lambda: pass,
-                                     relief='raised',
-                                     borderwidth=3,
-                                     width=50,
-                                     height=5)
+        geography_button = tk.Button(button_frame, text='Geography',
+                                     relief='raised', borderwidth=3, width=50, height=5)
         geography_button.grid(row=2, column=0, pady=5)
 
-        cs_button = tk.Button(button_frame,
-                              text='Computer Sciences',
-                              # command=lambda: pass,
-                              relief='raised',
-                              borderwidth=3,
-                              width=50,
-                              height=5)
+        cs_button = tk.Button(button_frame, text='Computer Sciences',
+                              relief='raised', borderwidth=3, width=50, height=5)
         cs_button.grid(row=3, column=0, pady=5)
 
-        physics_button = tk.Button(button_frame,
-                                   text='Physics',
-                                   # command=lambda: pass,
-                                   relief='raised',
-                                   borderwidth=3,
-                                   width=50,
-                                   height=5)
+        physics_button = tk.Button(button_frame, text='Physics',
+                                   relief='raised', borderwidth=3, width=50, height=5)
         physics_button.grid(row=0, column=1, pady=5, padx=555)
 
-        chemistry_button = tk.Button(button_frame,
-                                     text='Chemistry',
-                                     # command=lambda: pass,
-                                     relief='raised',
-                                     borderwidth=3,
-                                     width=50,
-                                     height=5)
+        chemistry_button = tk.Button(button_frame, text='Chemistry',
+                                     relief='raised', borderwidth=3, width=50, height=5)
         chemistry_button.grid(row=1, column=1, pady=5)
 
-        back_button = tk.Button(button_frame,
-                                text='Go Back',
-                                command=lambda: self.controller.show_frame(
-                                    "CandidateLogin"),
-                                relief='raised',
-                                borderwidth=3,
-                                width=50,
-                                height=5)
+        back_button = tk.Button(button_frame, text='Go Back', command=lambda: self.controller.show_frame(
+            "CandidateLogin"), relief='raised', borderwidth=3, width=50, height=5)
         back_button.grid(row=2, column=1, pady=5)
 
         bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
         bottom_frame.pack(fill='x', side='bottom')
+
+
+class AddCoursePage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg='#3d3d5c')
+        self.controller = controller
+        CN_label = tk.Label(self, text='Enter Course Name', font=(
+            'orbitron', 13), bg='#3d3d5c', fg='white')
+        CN_label.pack(pady=10)
+        my_CN = tk.StringVar()
+
+        CN_entry = tk.Entry(
+            self, textvariable=my_CN, font=('orbitron', 12), width=22)
+        CN_entry.focus_set()
+        CN_entry.pack(ipady=7)
+
+        TN_label = tk.Label(self, text="Enter Teacher's Name", font=(
+            'orbitron', 13), bg='#3d3d5c', fg='white')
+        TN_label.pack(pady=10)
+        my_TN = tk.StringVar()
+
+        TN_entry = tk.Entry(
+            self, textvariable=my_CN, font=('orbitron', 12), width=22)
+        TN_entry.focus_set()
+        TN_entry.pack(ipady=7)
+
+        ac_button = tk.Button(self, text='Add Course',
+                              relief='raised', borderwidth=3, width=40, height=3)
+        ac_button.pack(pady=10)
+
+        goback_button = tk.Button(self, text='Go Back',
+                                  relief='raised', borderwidth=3, width=40, height=3)
+        goback_button.pack(pady=10, side=RIGHT)
 
 
 if __name__ == "__main__":
