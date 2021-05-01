@@ -7,10 +7,10 @@ from password_utils import *
 logged_in = {}
 
 DB = sqlite3.connect("./data.db")
+create_tables(DB)
 
 
 class SampleApp(tk.Tk):
-
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
@@ -41,7 +41,6 @@ class SampleApp(tk.Tk):
 
 
 class CandidateLogin(tk.Frame):
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg='#3d3d5c')
         self.controller = controller
@@ -100,7 +99,6 @@ class CandidateLogin(tk.Frame):
 
 
 class AdminLogin(tk.Frame):
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg='#3d3d5c')
         self.controller = controller
@@ -145,7 +143,7 @@ class AdminLogin(tk.Frame):
             self, text='Admin Login', command=self.verify, relief='raised', borderwidth=3, width=40, height=3)
         admin_login_button.pack(pady=10)
         candidate_login_button = tk.Button(
-                self, text='Candidate Login', command=lambda : self.controller.show_frame("CandidateLogin"), relief='raised', borderwidth=3, width=40, height=3)
+            self, text='Candidate Login', command=lambda: self.controller.show_frame("CandidateLogin"), relief='raised', borderwidth=3, width=40, height=3)
         candidate_login_button.pack(pady=10, side=RIGHT)
 
         # bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
@@ -156,6 +154,7 @@ class AdminLogin(tk.Frame):
 
     def verify(self):
         print("verifying")
+        # self.controller.show_frame("AdminMenuPage")
         if check_user(DB, self.username_var.get(), self.password_var.get()):
             if get_user(DB, username=self.username_var.get())[-1] == 1:
                 self.controller.show_frame("AdminMenuPage")
@@ -311,6 +310,12 @@ class AddUserPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg='#3d3d5c')
         self.controller = controller
+        heading_label = tk.Label(self, text='Manage Users', font=(
+            'orbitron', 45, 'bold'), foreground='#ffffff', background='#3d3d5c')
+        heading_label.pack(pady=25)
+        heading_label = tk.Label(self, text='Add Users', font=(
+            'orbitron', 25, 'bold'), foreground='#ffffff', background='#3d3d5c')
+        heading_label.pack(pady=5)
         newusername_label = tk.Label(self, text='Enter a Username', font=(
             'orbitron', 13), bg='#3d3d5c', fg='white')
         newusername_label.pack(pady=10)
@@ -340,7 +345,23 @@ class AddUserPage(tk.Frame):
                                  relief='raised', borderwidth=3, width=40, height=3)
         add_user_btn.pack(pady=10)
 
-        back_btn = tk.Button(self, text='Go Back', command=lambda : self.controller.show_frame("AdminMenuPage"),
+        heading_label = tk.Label(self, text='Remove Users', font=(
+            'orbitron', 25, 'bold'), foreground='#ffffff', background='#3d3d5c')
+        heading_label.pack(pady=5)
+        self.remove_user = tk.StringVar()
+        newusername_label = tk.Label(self, text='Enter a Username', font=(
+            'orbitron', 13), bg='#3d3d5c', fg='white')
+        newusername_label.pack(pady=10)
+        remove_user_entry = tk.Entry(
+            self, textvariable=self.remove_user, font=('orbitron', 12), width=22)
+
+        remove_user_entry.pack(ipady=7)
+
+        remove_user_btn = tk.Button(self, text='Remove User', command=self.remove,
+                                    relief='raised', borderwidth=3, width=40, height=3)
+        remove_user_btn.pack(pady=20)
+
+        back_btn = tk.Button(self, text='Go Back', command=lambda: self.controller.show_frame("AdminMenuPage"),
                              relief='raised', borderwidth=3, width=40, height=3)
         back_btn.pack(pady=10, side=RIGHT)
 
@@ -351,6 +372,10 @@ class AddUserPage(tk.Frame):
         print("adding user")
         add_user(DB, self.username.get(),
                  self.password.get(), self.admin.get())
+
+    def remove(self):
+        print("Removing User!")
+        remove_user(DB, self.remove_user.get())
 
 
 if __name__ == "__main__":

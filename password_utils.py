@@ -30,6 +30,12 @@ def gen_password_hash(password: str) -> bytes:
     return hashed_pass
 
 
+def check_pass(password: str, pass_hash: bytes) -> bool:
+    password_bytes = password.encode('utf-8')
+    pass_check = bcrypt.checkpw(password_bytes, pass_hash)
+    return pass_check
+
+
 # user funcs
 """
 add delete verify user
@@ -44,7 +50,8 @@ def add_user(con: sqlite3.Connection, username: str, password: str, admin: bool)
 
 
 def remove_user(con: sqlite3.Connection, username: str):
-    con.execute("DELETE FROM user WHERE username=?", (username,))
+    con.execute("DELETE FROM users WHERE username=?", (username,))
+    con.commit()
 
 
 def check_user(con: sqlite3.Connection, username: str, password: str) -> bool:
@@ -61,12 +68,6 @@ def get_user(con: sqlite3.Connection, username: str) -> List:
     user = con.execute("SELECT * FROM users WHERE username=?", (
         username,)).fetchone()
     return user
-
-
-def check_pass(password: str, pass_hash: bytes) -> bool:
-    password_bytes = password.encode('utf-8')
-    pass_check = bcrypt.checkpw(password_bytes, pass_hash)
-    return pass_check
 
 
 if __name__ == "__main__":
