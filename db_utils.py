@@ -8,9 +8,10 @@ import bcrypt
 def create_tables(con: sqlite3.Connection):
     SQL_SCRIPT = """
         CREATE TABLE IF NOT EXISTS subjects(
+            sub_id int AUTO INCREMENT,
             name varchar(20) NOT NULL,
-            sub_id int(10) NOT NULL,
-            questions_file_path varchar(50) NOT NULL
+            questions_file_path varchar(200) NOT NULL,
+            PRIMARY KEY (sub_id)
         );
         CREATE TABLE IF NOT EXISTS users(
             username varchar(20) NOT NULL,
@@ -19,6 +20,7 @@ def create_tables(con: sqlite3.Connection):
         );
     """
     con.executescript(SQL_SCRIPT)
+    add_user(con, "admin", "admin", True)
 
 # utils
 
@@ -38,7 +40,7 @@ def check_pass(password: str, pass_hash: bytes) -> bool:
 
 # user funcs
 """
-add delete verify user
+add delete verify
 """
 
 
@@ -68,6 +70,23 @@ def get_user(con: sqlite3.Connection, username: str) -> List:
     user = con.execute("SELECT * FROM users WHERE username=?", (
         username,)).fetchone()
     return user
+
+
+# subject
+'''
+get add update
+'''
+
+
+def get_subjects(con: sqlite3.Connection) -> List:
+    subjects = con.execute("SELECT * FROM subjects").fetchall()
+    return subjects
+
+
+def add_subject(con: sqlite3.Connection, sub_name: str, fpath: str):
+    con.execute(
+        "INSERT INTO subjects (name, questions_file_path) VALUES (?,?)", (sub_name, fpath))
+    con.commit()
 
 
 if __name__ == "__main__":

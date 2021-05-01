@@ -1,7 +1,8 @@
+from io import TextIOWrapper
 import tkinter as tk
-import time
 from tkinter.constants import LEFT, N, RIGHT, X
 import sqlite3
+from tkinter import filedialog
 
 from db_utils import *
 logged_in = {}
@@ -154,7 +155,7 @@ class AdminLogin(tk.Frame):
 
     def verify(self):
         print("verifying")
-        # self.controller.show_frame("AdminMenuPage")
+        self.controller.show_frame("AdminMenuPage")
         if check_user(DB, self.username_var.get(), self.password_var.get()):
             if get_user(DB, username=self.username_var.get())[-1] == 1:
                 self.controller.show_frame("AdminMenuPage")
@@ -228,42 +229,24 @@ class TestsPage(tk.Frame):
         self.controller = controller
         # retrieved from database
         # names here
-        # subjects = []
+        subjects = {}
 
         heading_label = tk.Label(self, text='Mock Test Portal', font=(
             'orbitron', 45, 'bold'), foreground='#ffffff', background='#3d3d5c')
         heading_label.pack(pady=25)
 
-        choose_amount_label = tk.Label(self, text='Choose the Subject', font=(
+        choose_sub_label = tk.Label(self, text='Choose the Subject', font=(
             'orbitron', 13), fg='white', bg='#3d3d5c')
-        choose_amount_label.pack()
+        choose_sub_label.pack()
 
         button_frame = tk.Frame(self, bg='#3d3d5c')
         button_frame.pack(fill='both', expand=True)
 
-        maths_button = tk.Button(button_frame, text='Mathematics',
-                                 relief='raised', borderwidth=3, width=50, height=5)
-        maths_button.grid(row=0, column=0, pady=5)
-
-        english_btn = tk.Button(button_frame, text='English',
-                                relief='raised', borderwidth=3, width=50, height=5)
-        english_btn.grid(row=1, column=0, pady=5)
-
-        geography_button = tk.Button(button_frame, text='Geography',
-                                     relief='raised', borderwidth=3, width=50, height=5)
-        geography_button.grid(row=2, column=0, pady=5)
-
-        cs_button = tk.Button(button_frame, text='Computer Sciences',
-                              relief='raised', borderwidth=3, width=50, height=5)
-        cs_button.grid(row=3, column=0, pady=5)
-
-        physics_button = tk.Button(button_frame, text='Physics',
-                                   relief='raised', borderwidth=3, width=50, height=5)
-        physics_button.grid(row=0, column=1, pady=5, padx=555)
-
-        chemistry_button = tk.Button(button_frame, text='Chemistry',
-                                     relief='raised', borderwidth=3, width=50, height=5)
-        chemistry_button.grid(row=1, column=1, pady=5)
+        for sub in get_subjects(DB):
+            print(sub)
+            subjects[sub[1]] = tk.Button(button_frame, text=sub[1],
+                                         relief='raised', borderwidth=3, width=50, height=5)
+            subjects[sub[1]].grid(row=0, column=0, pady=5)
 
         back_button = tk.Button(button_frame, text='Go Back', command=lambda: self.controller.show_frame(
             "CandidateMenuPage"), relief='raised', borderwidth=3, width=50, height=5)
@@ -280,30 +263,34 @@ class AddCoursePage(tk.Frame):
         CN_label = tk.Label(self, text='Enter Course Name', font=(
             'orbitron', 13), bg='#3d3d5c', fg='white')
         CN_label.pack(pady=10)
-        my_CN = tk.StringVar()
+        self.my_coursename = tk.StringVar()
 
         CN_entry = tk.Entry(
-            self, textvariable=my_CN, font=('orbitron', 12), width=22)
+            self, textvariable=self.my_coursename, font=('orbitron', 12), width=22)
         CN_entry.focus_set()
         CN_entry.pack(ipady=7)
 
-        TN_label = tk.Label(self, text="Enter Teacher's Name", font=(
-            'orbitron', 13), bg='#3d3d5c', fg='white')
-        TN_label.pack(pady=10)
-        my_TN = tk.StringVar()
+        sub_btn = tk.Button(self, text="Choose Question file",
+                            command=self.open_file, pady=10, padx=20)
+        sub_btn.pack(ipady=10)
 
-        TN_entry = tk.Entry(
-            self, textvariable=my_CN, font=('orbitron', 12), width=22)
-        TN_entry.focus_set()
-        TN_entry.pack(ipady=7)
-
-        ac_button = tk.Button(self, text='Add Course',
+        ac_button = tk.Button(self, text='Add Course', command=self.add_subject,
                               relief='raised', borderwidth=3, width=40, height=3)
         ac_button.pack(pady=10)
 
         goback_button = tk.Button(self, text='Go Back', command=lambda: self.controller.show_frame("AdminMenuPage"),
                                   relief='raised', borderwidth=3, width=40, height=3)
         goback_button.pack(pady=10, side=RIGHT)
+
+    def open_file(self):
+        file_opened = filedialog.askopenfile(initialdir="./")
+        self.sub_file = file_opened.name
+        print(self.sub_file)
+        file_opened.close()
+
+    def add_subject(self):
+        print("adding sub")
+        add_subject(DB, self.my_coursename.get(), self.sub_file)
 
 
 class AddUserPage(tk.Frame):
