@@ -145,7 +145,7 @@ class AdminLogin(tk.Frame):
             self, text='Admin Login', command=self.verify, relief='raised', borderwidth=3, width=40, height=3)
         admin_login_button.pack(pady=10)
         candidate_login_button = tk.Button(
-            self, text='Candidate Login', command=self.verify, relief='raised', borderwidth=3, width=40, height=3)
+                self, text='Candidate Login', command=lambda : self.controller.show_frame("CandidateLogin"), relief='raised', borderwidth=3, width=40, height=3)
         candidate_login_button.pack(pady=10, side=RIGHT)
 
         # bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
