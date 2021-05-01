@@ -3,7 +3,7 @@ import time
 from tkinter.constants import LEFT, N, RIGHT, X
 import sqlite3
 
-from password_utils import *
+from db_utils import *
 logged_in = {}
 
 DB = sqlite3.connect("./data.db")
