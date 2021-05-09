@@ -1,0 +1,69 @@
+The offset used in the conditional branching is __________ bit.
+24
+32
+16
+8
+1
+
+__________ directive is used to indicate the beginning of the program           instruction or data.
+EQU
+START
+AREA
+SPACE
+3
+
+SIMD stands for __________
+Single Instruction Multiple Data
+Simple Instruction Multiple Decoding
+Sequential Instruction Multiple Decoding
+System Information Mutable Data
+1
+
+In case of multimedia extension instructions, the pixels are encoded into a data item of _________
+16 bit
+32 bit
+24 bit
+8 bit
+4
+
+The instructions of IA-32 machines are of length up to ______
+4 bytes
+8 bytes
+16 bytes
+12 bytes
+4
+
+The bit present in the op code, indicating which of the operands is the source is called as ________
+SRC bit
+Indirection bit
+Direction bit
+FRM bit
+3
+
+The __________ directive is used to allocate 4 bytes of memory.
+DD
+ALLOC
+RESERVE
+SPACE
+1
+
+Data directive is used _________
+To indicate the ending of the data section
+To indicate the beginning of the data section
+To declare all the source operands
+To Initialize the operands
+2
+
+The instruction used to cause unconditional jump is ________
+UJG
+JG
+JMP
+GOTO
+3
+
+__________ instruction is used to check the bit of the condition flags.
+TEST
+TB
+CHECK
+BT
+4

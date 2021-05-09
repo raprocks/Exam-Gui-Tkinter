@@ -1,0 +1,69 @@
+OSI stands for _________.
+open system interconnection. 
+operating system interface. 
+optical service implementation. 
+open service Internet.
+1
+
+TCP/IP model does not have ______ layer but OSI model have this layer.
+session layer. 
+transport layer. 
+application layer. 
+network layer.
+1
+
+Which address is used on the internet for employing the TCP/IP protocols?
+physical address and logical address. 
+port address. 
+specific address. 
+all of the mentioned. 
+4
+
+TCP/IP model was developed _____ the OSI model.
+prior to. 
+after. 
+simultaneous to. 
+with no link to.
+1
+
+Which layer is responsible for process to process delivery in a general network model?
+network layer. 
+transport layer. 
+session layer. 
+data link layer.
+2
+
+Which address is used to identify a process on a host by the transport layer?
+physical address. 
+logical address. 
+port address. 
+specific address.
+3
+
+Mail services are available to network users through the _______ layer.
+Data Link. 
+Network. 
+Physical. 
+Application.
+4
+
+The physical layer is concerned with the movement of _______ over the physical medium.
+Programs. 
+Dialogs. 
+Protocol. 
+Bits.
+4
+
+In the OSI model, encryption and decryption are functions of the ____________.
+Transport Layer. 
+Presentation Layer. 
+Session Layer. 
+Application Layer.
+2
+
+A device that connects networks with different protocols –
+Switch 
+Hub 
+Gateway 
+Repeater
+3

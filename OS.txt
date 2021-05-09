@@ -1,72 +1,69 @@
-Operating System MCQ
-1.	The minimum number of frames to be allocated to a process is decided by the 
-a) the amount of available physical memory
-b) operating System
-c) instruction set architecture
-d) none of the mentioned
-Ans. c) instruction set architecture
+The minimum number of frames to be allocated to a process is decided by the 
+amount of available physical memory
+operating System
+instruction set architecture
+none of the mentioned
+3
 
-2.	When a page fault occurs before an executing instruction is complete if 
-a) the instruction must be restarted
-b) the instruction must be ignored
-c) the instruction must be completed ignoring the page fault
-d) none of the mentioned
-Ans. a) the instruction must be restarted
+When a page fault occurs before an executing instruction is complete if 
+the instruction must be restarted
+the instruction must be ignored
+the instruction must be completed ignoring the page fault
+none of the mentioned
+1
 
-3.	Consider a machine in which all memory reference instructions have only one memory address, for them we need at least _____ frame(s).
-a) one
-b) two
-c) three
-d) none of the mentioned
-Ans. b) two
+Consider a machine in which all memory reference instructions have only one memory address, for them we need at least _____ frame(s).
+one
+two
+hree
+none of the mentioned
+2
 
-4.	The maximum number of frames per process is defined by ____________
-a) the amount of available physical memory
-b) operating System
-c) instruction set architecture
-d) none of the mentioned
-Ans. a) the amount of available physical memory
+The maximum number of frames per process is defined by ____________
+the amount of available physical memory
+operating System
+instruction set architecture
+none of the mentioned
+1
 
-5.	The algorithm in which we split m frames among n processes, to give everyone an equal share, m/n frames is known as ____________
-a) proportional allocation algorithm
-b) equal allocation algorithm
-c) split allocation algorithm
-d) none of the mentioned
-Ans. b) equal allocation algorithm
+The algorithm in which we split m frames among n processes, to give everyone an equal share, m/n frames is known as ____________
+proportional allocation algorithm
+equal allocation algorithm
+split allocation algorithm
+none of the mentioned
+2
 
+The algorithm in which we allocate memory to each process according to its size is known as
+proportional allocation algorithm
+equal allocation algorithm
+split allocation algorithm
+none of the mentioned
+2
 
-6.	 The algorithm in which we allocate memory to each process according to its size is known as
-a) proportional allocation algorithm
-b) equal allocation algorithm
-c) split allocation algorithm
-d) none of the mentioned
-Ans. b) equal allocation algorithm
+With either equal or proportional algorithm, a high priority process is treated ___________ a low priority process.
+greater than
+same as
+lesser than
+none of the mentioned
+2
 
-7.	 With either equal or proportional algorithm, a high priority process is treated ___________ a low priority process.
-a) greater than
-b) same as
-c) lesser than
-d) none of the mentioned
-Ans. b) same as
+_________ replacement allows a process to select a replacement frame from the set of all frames, even if the frame is currently allocated to some other process.
+Local
+Universal
+Global
+Public
+3
 
-8.	_________ replacement allows a process to select a replacement frame from the set of all frames, even if the frame is currently allocated to some other process.
-a) Local
-b) Universal
-c) Global
-d) Public
-Ans. c) Global
+_________ replacement allows each process to only select from its own set of allocated frames.
+Local
+Universal
+Global
+Public
+1
 
-9.	_________ replacement allows each process to only select from its own set of allocated frames.
-a) Local
-b) Universal
-c) Global
-d) Public
-Ans. a) Local
-
-10.	One problem with the global replacement algorithm is that ____________
-a) it is very expensive
-b) many frames can be allocated to a process
-c) only a few frames can be allocated to a process
-d) a process cannot control its own page – fault rate
-
-Ans. d) a process cannot control its own page – fault rate Ans.
+One problem with the global replacement algorithm is that ____________
+it is very expensive
+many frames can be allocated to a process
+only a few frames can be allocated to a process
+a process cannot control its own page – fault rate
+4
