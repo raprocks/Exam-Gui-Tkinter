@@ -1,7 +1,8 @@
+from os import access
 import tkinter as tk
 from tkinter.constants import LEFT, N, RIGHT, X
 import sqlite3
-from tkinter import ttk, Scrollbar, filedialog, messagebox
+from tkinter import Label, ttk, Scrollbar, filedialog, messagebox
 from db_utils import *
 logged_in = {}
 
@@ -40,7 +41,6 @@ class SampleApp(tk.Tk):
             # the one on the top of the stacking order
             # will be the one that is visible.
             frame.grid(row=0, column=0, sticky="nsew")
-        print(self.frames)
         self.show_frame("CandidateLogin")
 
     def show_frame(self, page_name):
@@ -315,46 +315,57 @@ class ExamPage(tk.Frame):
         heading_label = tk.Label(self, text=subject[1]+" Test Page", font=(
             'orbitron', 45, 'bold'), foreground='#ffffff', background='#3d3d5c')
         heading_label.pack(pady=25)
+        # test
+        container = ttk.Frame(self)
+        self.canvas = tk.Canvas(container)
+        self.scrollbar = ttk.Scrollbar(
+            container, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = tk.Frame(self.canvas)
 
-        wrap = tk.LabelFrame(self, height=5)
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(
+                scrollregion=self.canvas.bbox("all")
+            )
+        )
 
-        canvas = tk.Canvas(wrap, bg='#111', height=5,
-                           scrollregion=(0, 0, 1000, 1000))
-        canvas.pack(fill="both", expand=True)
-        myscrollbar = ttk.Scrollbar(
-            wrap, orient="vertical", command=canvas.yview)
+        self.canvas.create_window(
+            0, 0, window=self.scrollable_frame, anchor="center")
 
-        canvas.configure(yscrollcommand=myscrollbar.set)
-        question_frame = tk.Frame(canvas, bg='#3d3d5c')
-        question_dict = {}
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
         with open(question_file) as fd:
             data = fd.read()
         questions = data.split('\n\n')
         for question in questions:
             split_data = question.split('\n')
             question_data = split_data[0]
-            option1 = tk.Radiobutton(question_frame, text=split_data[1])
-            option2 = tk.Radiobutton(question_frame, text=split_data[2])
-            option3 = tk.Radiobutton(question_frame, text=split_data[3])
-            option4 = tk.Radiobutton(question_frame, text=split_data[4])
+            option1 = tk.Checkbutton(self.scrollable_frame, text=split_data[1])
+            option2 = tk.Checkbutton(self.scrollable_frame, text=split_data[2])
+            option3 = tk.Checkbutton(self.scrollable_frame, text=split_data[3])
+            option4 = tk.Checkbutton(self.scrollable_frame, text=split_data[4])
             answer = split_data[5]
-            question_label = tk.Label(question_frame, text=question_data, font=(
+            question_label = tk.Label(self.scrollable_frame, text=question_data, font=(
                 'orbitron', 13), fg='white', bg='#3d3d5c')
-            question_label.pack()
-            option1.pack()
-            option2.pack()
-            option3.pack()
-            option4.pack()
-        canvas.create_window((0, 0), window=question_frame, anchor="nw")
-        myscrollbar.pack(side="right", fill="y")
-        question_frame.pack()
-        wrap.pack(fill='both', expand=True, padx=20, pady=20)
+            Label(self.scrollable_frame).pack()
+            question_label.pack(anchor="center")
+            option1.pack(anchor="center")
+            option2.pack(anchor="center")
+            option3.pack(anchor="center")
+            option4.pack(anchor="center")
 
-        # for sub in get_subjects(DB):
+        container.pack(expand=True, fill="x")
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.scrollbar.pack(side="right", fill="both")
 
         back_button = tk.Button(self, text='Go Back', command=lambda: self.controller.show_frame(
             "CandidateMenuPage"), relief='raised', borderwidth=3, width=50, height=5)
         back_button.pack(pady=5)
+        # print(wrap.children)
+
+    # for sub in get_subjects(DB):
+    def _on_mousewheel(self, event):
+        self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
     def get_questions(self):
         pass
