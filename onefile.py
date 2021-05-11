@@ -8,7 +8,8 @@ logged_in = {}
 
 DB = sqlite3.connect("./data.db")
 create_tables(DB)
-
+if get_user(DB, "admin") is None:
+    add_user(DB, "admin", "admin", True)
 global_data = {
     "user": ""
 }

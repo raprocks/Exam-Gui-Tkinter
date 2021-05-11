@@ -20,11 +20,11 @@ def create_tables(con: sqlite3.Connection):
         );
         CREATE TABLE IF NOT EXISTS results(
             rec_id int AUTO INCREMENT,
-            user varchar(20) NOT NULL,
+            username varchar(20) NOT NULL,
             subject varchar(20) NOT NULL,
             result int NOT NULL,
             PRIMARY KEY (rec_id)
-        )
+        );
     """
     con.executescript(SQL_SCRIPT)
     add_user(con, "admin", "admin", True)
@@ -99,7 +99,7 @@ def add_subject(con: sqlite3.Connection, sub_name: str, fpath: str):
 
 def save_result(con: sqlite3.Connection, user: str, subject: str, result: int):
     con.execute(
-        "INSERT INTO results (user, subject, result) VALUES (?,?,?)", (user, subject, result))
+        "INSERT INTO results (username, subject, result) VALUES (?,?,?)", (user, subject, result))
     con.commit()
 
 
