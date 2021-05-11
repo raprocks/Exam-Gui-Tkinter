@@ -9,6 +9,10 @@ logged_in = {}
 DB = sqlite3.connect("./data.db")
 create_tables(DB)
 
+global_data = {
+    "user": ""
+}
+
 
 class SampleApp(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -22,7 +26,7 @@ class SampleApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
         self.frames = {}
         Frames = [CandidateLogin, CandidateMenuPage, AdminLogin, TestsPage,
-                  TestsPage, AdminMenuPage, AddCoursePage, AddUserPage]
+                  TestsPage, AdminMenuPage, AddCoursePage, AddUserPage, ResultsPage]
         for F in Frames:
             page_name = F.__name__
             frame = F(parent=container, controller=self)
@@ -98,10 +102,11 @@ class CandidateLogin(tk.Frame):
 
     def verify(self):
         print("verifying")
-        self.controller.show_frame("CandidateMenuPage")
-        # if check_user(DB, self.user_var.get(), self.password_var.get()):
-        # else:
-        #     self.incorrect_password_label['text'] = 'Incorrect Password'
+        if check_user(DB, self.user_var.get(), self.password_var.get()):
+            global_data["user"] = self.user_var.get()
+            self.controller.show_frame("CandidateMenuPage")
+        else:
+            self.incorrect_password_label['text'] = 'Incorrect Password'
 
     def handle_focus_in(self, _):
         self.password_entry_box.configure(fg='black', show='*')
@@ -162,7 +167,7 @@ class AdminLogin(tk.Frame):
 
     def verify(self):
         print("verifying")
-        self.controller.show_frame("AdminMenuPage")
+        # self.controller.show_frame("AdminMenuPage")
         if check_user(DB, self.username_var.get(), self.password_var.get()):
             if get_user(DB, username=self.username_var.get())[-1] == 1:
                 self.controller.show_frame("AdminMenuPage")
@@ -212,10 +217,6 @@ class AdminMenuPage(tk.Frame):
         tests_btn = tk.Button(button_frame, text='Add Courses', command=lambda: self.controller.show_frame(
             "AddCoursePage"), relief='raised', borderwidth=3, width=50, height=5)
         tests_btn.grid(row=0, column=0, pady=5)
-
-        tests_btn = tk.Button(button_frame, text='Add Questions', command=lambda: self.controller.show_frame(
-            "QuestionAddPage"), relief='raised', borderwidth=3, width=50, height=5)
-        tests_btn.grid(row=3, column=0, pady=5)
 
         tests_btn = tk.Button(button_frame, text='Results', command=lambda: self.controller.show_frame(
             "ResultsPage"), relief='raised', borderwidth=3, width=50, height=5)
@@ -334,19 +335,29 @@ class ExamPage(tk.Frame):
 
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+        self.questions = {}
         with open(question_file) as fd:
             data = fd.read()
         questions = data.split('\n\n')
-        for question in questions:
-            split_data = question.split('\n')
-            question_data = split_data[0]
-            option1 = tk.Checkbutton(self.scrollable_frame, text=split_data[1])
-            option2 = tk.Checkbutton(self.scrollable_frame, text=split_data[2])
-            option3 = tk.Checkbutton(self.scrollable_frame, text=split_data[3])
-            option4 = tk.Checkbutton(self.scrollable_frame, text=split_data[4])
-            answer = split_data[5]
-            question_label = tk.Label(self.scrollable_frame, text=question_data, font=(
+        for idx, val in enumerate(questions):
+            split_data = val.split('\n')
+            self.questions[idx] = {
+                "question": split_data[0],
+                "options": split_data[1:5],
+                "answer": int(split_data[5]),
+                "var": tk.IntVar()}
+        self.question_groups = {}
+        for idx, data in self.questions.items():
+            question_label = tk.Label(self.scrollable_frame, text=data["question"], font=(
                 'orbitron', 13), fg='white', bg='#3d3d5c')
+            option1 = tk.Radiobutton(
+                self.scrollable_frame, text=data["options"][0], variable=data["var"], value=1)
+            option2 = tk.Radiobutton(
+                self.scrollable_frame, text=data["options"][1], variable=data["var"], value=2)
+            option3 = tk.Radiobutton(
+                self.scrollable_frame, text=data["options"][2], variable=data["var"], value=3)
+            option4 = tk.Radiobutton(
+                self.scrollable_frame, text=data["options"][3], variable=data["var"], value=4)
             Label(self.scrollable_frame).pack()
             question_label.pack(anchor="center")
             option1.pack(anchor="center")
@@ -357,18 +368,29 @@ class ExamPage(tk.Frame):
         container.pack(expand=True, fill="x")
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="both")
-
+        self.submit_btn = tk.Button(
+            self, text='Submit', command=self.on_sumbit, relief='raised', borderwidth=3, width=50, height=5)
+        self.submit_btn.pack(pady=5)
         back_button = tk.Button(self, text='Go Back', command=lambda: self.controller.show_frame(
-            "CandidateMenuPage"), relief='raised', borderwidth=3, width=50, height=5)
+            "CandidateMenuPage"),
+            relief='raised', borderwidth=3, width=50, height=5)
         back_button.pack(pady=5)
+
         # print(wrap.children)
 
     # for sub in get_subjects(DB):
     def _on_mousewheel(self, event):
         self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
-    def get_questions(self):
-        pass
+    def on_sumbit(self):
+        total = 0
+        for idx, data in self.questions.items():
+            print("answer:", data["answer"], "var:", data["var"].get())
+            if data["var"].get() == data["answer"]:
+                total += 1
+        save_result(DB, global_data["user"], self.subject[1], total)
+        print(total)
+        self.controller.show_frame("CandidateMenuPage")
 
 
 class AddUserPage(tk.Frame):
@@ -441,6 +463,48 @@ class AddUserPage(tk.Frame):
     def remove(self):
         print("Removing User!")
         remove_user(DB, self.remove_user.get())
+
+
+class ResultsPage(tk.Frame):
+    def __init__(self, parent, controller: SampleApp):
+        tk.Frame.__init__(self, parent, bg='#3d3d5c')
+        self.controller = controller
+        heading_label = tk.Label(self, text='Results', font=(
+            'orbitron', 25, 'bold'), foreground='#ffffff', background='#3d3d5c')
+        heading_label.pack(pady=5)
+        res = get_results(DB)
+        container = ttk.Frame(self)
+        canvas = tk.Canvas(container)
+        scrollbar = ttk.Scrollbar(
+            container, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(
+                scrollregion=canvas.bbox("all")
+            )
+        )
+
+        canvas.create_window(0, 0, window=scrollable_frame, anchor="nw")
+
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        for result in res:
+
+            res_id = result[0]
+            user = result[1]
+            subject = result[2]
+            marks = result[3]
+            label_text = f"{res_id} : {user} | {subject} | {result}"
+            ttk.Label(scrollable_frame, text=label_text).pack()
+
+        container.pack()
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        back_btn = tk.Button(self, text='Go Back', command=lambda: self.controller.show_frame("AdminMenuPage"),
+                             relief='raised', borderwidth=3, width=40, height=3)
+        back_btn.pack(pady=10, side=RIGHT)
 
 
 if __name__ == "__main__":

@@ -18,6 +18,13 @@ def create_tables(con: sqlite3.Connection):
             password_hash varchar(100) NOT NULL,
             is_admin bool NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS results(
+            rec_id int AUTO INCREMENT,
+            user varchar(20) NOT NULL,
+            subject varchar(20) NOT NULL,
+            result int NOT NULL,
+            PRIMARY KEY (rec_id)
+        )
     """
     con.executescript(SQL_SCRIPT)
     add_user(con, "admin", "admin", True)
@@ -87,6 +94,18 @@ def add_subject(con: sqlite3.Connection, sub_name: str, fpath: str):
     con.execute(
         "INSERT INTO subjects (name, questions_file_path) VALUES (?,?)", (sub_name, fpath))
     con.commit()
+# result
+
+
+def save_result(con: sqlite3.Connection, user: str, subject: str, result: int):
+    con.execute(
+        "INSERT INTO results (user, subject, result) VALUES (?,?,?)", (user, subject, result))
+    con.commit()
+
+
+def get_results(con: sqlite3.Connection):
+    results = con.execute("SELECT * FROM results").fetchall()
+    return results
 
 
 if __name__ == "__main__":
