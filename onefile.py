@@ -27,7 +27,7 @@ class SampleApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
         self.frames = {}
         Frames = [CandidateLogin, CandidateMenuPage, AdminLogin, TestsPage,
-                  TestsPage, AdminMenuPage, AddCoursePage, AddUserPage, ResultsPage]
+                  AdminMenuPage, AddCoursePage, AddUserPage, ResultsPage]
         for F in Frames:
             page_name = F.__name__
             frame = F(parent=container, controller=self)
@@ -50,8 +50,13 @@ class SampleApp(tk.Tk):
 
     def show_frame(self, page_name):
         '''Show a frame for the given page name'''
+        print(page_name)
         frame = self.frames[page_name]
         frame.tkraise()
+        try:
+            print(frame.children.get("!frame").children.get('!canvas').children)
+        except:
+            pass
 
 
 class CandidateLogin(tk.Frame):
@@ -252,13 +257,18 @@ class TestsPage(tk.Frame):
         myscrollbar = Scrollbar(button_frame, orient="vertical")
         myscrollbar.pack(side="right", fill="y")
 
-        for sub in get_subjects(DB):
-            page_name = sub[1]+"Page"
-            subjects[sub[1]] = tk.Button(button_frame, text=sub[1], command=lambda: self.controller.show_frame(page_name),
-                                         relief='raised', borderwidth=3, width=50, height=5)
-
-        for sub in subjects.keys():
-            subjects[sub].pack(padx=5, pady=5)
+        OSbtn = tk.Button(button_frame, text="OS", command=lambda: self.controller.show_frame("OSPage"),
+                          relief='raised', borderwidth=3, width=50, height=5)
+        ATbtn = tk.Button(button_frame, text="AT", command=lambda: self.controller.show_frame("ATPage"),
+                          relief='raised', borderwidth=3, width=50, height=5)
+        CNNDbtn = tk.Button(button_frame, text="CNND", command=lambda: self.controller.show_frame("CNNDPage"),
+                            relief='raised', borderwidth=3, width=50, height=5)
+        COAbtn = tk.Button(button_frame, text="COA", command=lambda: self.controller.show_frame("COAPage"),
+                           relief='raised', borderwidth=3, width=50, height=5)
+        OSbtn.pack(padx=5, pady=5)
+        ATbtn.pack(padx=5, pady=5)
+        CNNDbtn.pack(padx=5, pady=5)
+        COAbtn.pack(padx=5, pady=5)
         bottom_frame = tk.Frame(self, relief='raised', borderwidth=3)
         bottom_frame.pack(fill='x', side='bottom')
 
@@ -318,9 +328,9 @@ class ExamPage(tk.Frame):
             'orbitron', 45, 'bold'), foreground='#ffffff', background='#3d3d5c')
         heading_label.pack(pady=25)
         # test
-        container = ttk.Frame(self)
+        container = tk.Frame(self)
         self.canvas = tk.Canvas(container)
-        self.scrollbar = ttk.Scrollbar(
+        self.scrollbar = tk.Scrollbar(
             container, orient="vertical", command=self.canvas.yview)
         self.scrollable_frame = tk.Frame(self.canvas)
 
